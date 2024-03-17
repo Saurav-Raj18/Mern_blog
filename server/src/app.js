@@ -10,9 +10,10 @@ app.use(express.urlencoded({extended:true,limit:"160kb"}))//for url
 app.use(express.static("public"))
 app.use(cookieParser())
 
+
 //import router
 const authRouter=require('./routes/auth.route.js');
-
+//console.log(authRouter)
 app.use("/api/v1/user",authRouter);
 
 
