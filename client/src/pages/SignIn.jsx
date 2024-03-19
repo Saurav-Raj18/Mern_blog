@@ -13,7 +13,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.user)
-  console.log(error)
+ // console.log(error)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username || !password) {
