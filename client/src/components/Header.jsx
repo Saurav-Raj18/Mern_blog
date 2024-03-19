@@ -33,7 +33,7 @@ const Header = () => {
                 </Button>
 
                 {currentUser.currentUser ?(
-                    <Dropdown  arrowIcon={false} inline label={<Avatar rounded  alt='user' img={currentUser.profilePicture} />}>
+                    <Dropdown  arrowIcon={false} inline label={<Avatar rounded  alt='user' img={currentUser.currentUser.profilePicture} />}>
                        <Dropdown.Header>
                          <span className='block text-sm'>{currentUser.currentUser.username}</span>
                          <span className='block text-sm font-medium truncate '>{currentUser.currentUser.email}</span>
