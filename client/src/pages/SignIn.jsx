@@ -8,7 +8,7 @@ import axios from 'axios';
 import OaAuth from '../components/OaAuth';
 
 const SignIn = () => {
-  const [username, setusername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,19 +16,21 @@ const SignIn = () => {
  // console.log(error)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !password) {
+    if (!email || !password) {
       return dispatch(signInFailure('Please fill all the fields'));
     }
     try {
       dispatch(signInStart());
-      const res = await axios.post("http://localhost:4000/api/v1/user/signin", {
-        username,
+      const res = await axios.post("http://localhost:4000/api/v1/auth/signin", {
+        email,
         password
-      })
+      },{withCredentials: true})
       // console.log(res);
       if (res.status === 200) {
         dispatch(signInSuccess(res.data));
         navigate("/");
+        console.log(document.cookie)
+        
       }
     }
     catch (error) {
@@ -46,9 +48,9 @@ const SignIn = () => {
         <form className="flex flex-col gap-4 p-6 rounded-lg shadow-lg bg-white" onSubmit={handleSubmit}>
           <div>
             <div className="mb-2 block">
-              <Label htmlFor="username" value="Username" />
+              <Label htmlFor="email" value="email" />
             </div>
-            <TextInput id="username" type="text" placeholder="Your username" onChange={(e) => setusername(e.target.value)} required />
+            <TextInput id="email" type="text" placeholder="Your email" onChange={(e) => setemail(e.target.value)} required />
           </div>
           <div>
             <div className="mb-2 block">

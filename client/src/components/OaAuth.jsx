@@ -17,11 +17,11 @@ const OaAuth = () => {
       try {
          const resultsFromGoogle=await signInWithPopup(auth,provider)
         // console.log(resultsFromGoogle.user)
-         const response=await axios.post('http://localhost:4000/api/v1/user/google',{
+         const response=await axios.post('http://localhost:4000/api/v1/auth/google',{
             name:resultsFromGoogle.user.displayName,
             email:resultsFromGoogle.user.email,
             googlePhotoUrl:resultsFromGoogle.user.photoURL,
-         })
+         },{withCredentials:true})
         // console.log(response)
          if(response){
            dispatch(signInSuccess(response.data))
