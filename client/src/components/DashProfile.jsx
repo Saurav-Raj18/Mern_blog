@@ -6,7 +6,7 @@ import { useRef } from 'react'
 import { getDownloadURL, getStorage, uploadBytesResumable } from 'firebase/storage'
 import { ref } from 'firebase/storage';
 import app from '../firebase'
-import { updateFailure, updateStart, updateSuccess,deleteUserFailure,deleteUserStart,deleteUserSuccess } from '../redux/user/userSlice'
+import { signOutSuccess,updateFailure, updateStart, updateSuccess,deleteUserFailure,deleteUserStart,deleteUserSuccess } from '../redux/user/userSlice'
 import { useDispatch } from 'react-redux'
 import {HiOutlineExclamationCircle} from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
@@ -108,6 +108,20 @@ const DashProfile = () => {
       }
   }
 
+  const handleSignout=async()=>{
+     try {
+         const res=await axios.post('http://localhost:4000/api/v1/user/signout',{ withCredentials: true});
+         console.log(res)
+         if(!res)console.log(res);
+         else{
+          dispatch(signOutSuccess());
+          navigate("/")
+         }
+     } catch (error) {
+       console.log("error in signout",error)
+     }
+  }
+
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
       <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
@@ -125,7 +139,9 @@ const DashProfile = () => {
       </form>
       <div className='text-red-500 flex justify-between mt-5'>
         <span onClick={() => setshowModal(true)} className='cursor-pointer'>Delete Account</span>
-        <span className='cursor-pointer'>Sign out</span>
+
+        <span onClick={handleSignout} className='cursor-pointer'>Sign out</span>
+
       </div>
       {userupdateSuccess &&
         <Alert color='success' className='mt-5'>{userupdateSuccess}</Alert>
