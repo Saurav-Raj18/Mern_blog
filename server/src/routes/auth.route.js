@@ -7,4 +7,5 @@ authRouter.post("/signup",registerUser);
 authRouter.post("/signin",loginUser);
 authRouter.post("/google",google)
 
+
 module.exports=authRouter;

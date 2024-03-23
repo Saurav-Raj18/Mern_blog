@@ -1,0 +1,28 @@
+const { ApiError } = require("../utils/apiError.js")
+const {Post}=require('../models/post.model.js')
+
+const create=async(req,res,next)=>{
+    // console.log(req)
+     if(!req.user.isAdmin){
+         return next(ApiError(403,'You are not allowed to create the post'))
+     }
+
+     if(!req.body.title||!req.body.content){
+        return next(ApiError(400,'Please Provide all the fields.'))
+     }
+     const slug=req.body.title.split(' ').join('-').toLowerCase().replace(/[^a-zA-Z0-9-]/g, '');
+
+     const newPost=new Post({
+         ...req.body,slug,userId:req.user.id,
+  });
+  try {
+      const savedPost=await newPost.save();
+      res.status(201).json(savedPost);
+  } catch (error) {
+     next(error);
+  }
+    // console.log(newPost);
+
+}
+
+module.exports={create}

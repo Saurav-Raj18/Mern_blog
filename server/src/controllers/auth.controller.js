@@ -50,18 +50,20 @@ const registerUser = asyncHandler(async (req, res, next) => {
 })
 
 const loginUser = asyncHandler(async (req, res, next) => {
-    
-    const { username, password } = req.body;
-    if (!username || !password) {
+
+    const { email, password } = req.body;
+    const expiryDate = new Date();
+    expiryDate.setTime(expiryDate.getTime() + 3 * 60 * 60 * 1000);
+    if (!email || !password) {
         next(ApiError(400, "All fields are required"))
     }
     try {
-        const validUser = await User.findOne({ username })
+        const validUser = await User.findOne({ email })
         if (!validUser) {
             // res.status(404).json("User not found!!!")
-           // next(ApiError(404, "User not found!!!"))
+            // next(ApiError(404, "User not found!!!"))
             res.status(404).json({
-                success:false,
+                success: false,
                 message: "User not found"
             })
         }
@@ -71,8 +73,8 @@ const loginUser = asyncHandler(async (req, res, next) => {
         if (!validpassword) {
             //console.log(validpassword)
             res.status(400).json({
-                success:false,
-                message:"Invalid password",
+                success: false,
+                message: "Invalid password",
             })
             //console.log("password mismatch!!!")
             //return next(ApiError(400, "invalid password"))
@@ -86,14 +88,18 @@ const loginUser = asyncHandler(async (req, res, next) => {
     
           .json("signin successfull"): Finally, the response is sent back to the client in JSON format with the message "signin successfull". This message indicates that the sign-in process was successfu*/
 
-            const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
-            
+            const token = jwt.sign({ id: validUser._id,isAdmin:validUser.isAdmin }, process.env.JWT_SECRET);
+
             const { password: pass, ...rest } = validUser._doc;
 
-            res.status(200).cookie("access_token", token, {
-                httpOnly: true,
-            }).json(rest);
+           // res.cookie("token", "saurav raj")
 
+            res.status(200).cookie("access_token", token, {
+                httpOnly:true,
+                expires: expiryDate,
+            }).json(rest);
+            //res.status(200).json(rest);
+            //console.log(res)
         }
     }
     catch (error) {
@@ -103,41 +109,47 @@ const loginUser = asyncHandler(async (req, res, next) => {
 })
 
 
- const google=async(req,res,next)=>{
-     const {email,name,googlePhotoUrl}=req.body
-     //console.log(email,password,googlePhotoUrl)
-     try {
-        const user=await User.findOne({email})
+const google = async (req, res, next) => {
+    const { email, name, googlePhotoUrl } = req.body
+    const expiryDate = new Date();
+    expiryDate.setTime(expiryDate.getTime() + 3 * 60 * 60 * 1000);
+    //console.log(email,password,googlePhotoUrl)
+    try {
+        const user = await User.findOne({ email })
         //console.log(user)
-        if(user){
-            const token=jwt.sign({id:user._id},process.env.JWT_SECRET);
-            const {password:pass,...rest}=user._doc;
-            res.status(200).cookie("access_token",token,{
-                httpOnly:true,
+        if (user) {
+            const token = jwt.sign({ id: user._id,isAdmin:user.isAdmin }, process.env.JWT_SECRET);
+            const { password: pass, ...rest } = user._doc;
+            res.status(200).cookie("access_token", token, {
+                httpOnly: true,
+                expires: expiryDate,
             }).json(rest)
         }
         else {
-            const generatedPassword=Math.random().toString(36).slice(-8)+Math.random().toString(36).slice(-8);
-            const hashedPassword=bcrypt.hashSync(generatedPassword,10);
-            const newUser=await User.create({
-                username:name.toLowerCase().split(' ').join('')+Math.random().toString(9).slice(-4),
+            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+            const newUser = await User.create({
+                username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
                 email,
-                password:hashedPassword,
-                profilePicture:googlePhotoUrl,
+                password: hashedPassword,
+                profilePicture: googlePhotoUrl,
 
             });
             await newUser.save();
-            const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET);
-            const {password,...rest}=newUser._doc;
-            
-            res.status(200).cookie('access_token',token,{
-                httpOnly:true,
+            const token = jwt.sign({ id: newUser._id,isAdmin:newUser.isAdmin}, process.env.JWT_SECRET);
+            const { password, ...rest } = newUser._doc;
+
+            res.status(200).cookie('access_token', token, {
+                httpOnly: true,
+                expires: expiryDate,
             }).json(rest)
+            // console.log(res.cookie)
+
         }
 
-     } catch (error) {
+    } catch (error) {
         console.log(error)
         next(error)
-     }
- }
-module.exports = { registerUser, loginUser,google };
+    }
+}
+module.exports = { registerUser, loginUser, google };
