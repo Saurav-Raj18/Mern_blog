@@ -7,11 +7,13 @@ import { FaMoon,FaSun } from 'react-icons/fa'
 import {useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { signOutSuccess } from '../redux/user/userSlice';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 const Header = () => {
     const path=useLocation().pathname;
     const currentUser=useSelector((state)=>state.user)
     const dispatch=useDispatch();
+    const navigate=useNavigate();
     const {theme}=useSelector((state)=>state.theme);
 
     const handleSignout=async()=>{
@@ -21,6 +23,7 @@ const Header = () => {
             if(!res)console.log(res);
             else{
              dispatch(signOutSuccess());
+             navigate("/");
             }
         } catch (error) {
           console.log("error in signout",error)

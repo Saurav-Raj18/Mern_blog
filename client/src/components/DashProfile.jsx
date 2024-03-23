@@ -6,10 +6,10 @@ import { useRef } from 'react'
 import { getDownloadURL, getStorage, uploadBytesResumable } from 'firebase/storage'
 import { ref } from 'firebase/storage';
 import app from '../firebase'
-import { signOutSuccess,updateFailure, updateStart, updateSuccess,deleteUserFailure,deleteUserStart,deleteUserSuccess } from '../redux/user/userSlice'
+import { signOutSuccess, updateFailure, updateStart, updateSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess } from '../redux/user/userSlice'
 import { useDispatch } from 'react-redux'
-import {HiOutlineExclamationCircle} from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
+import { HiOutlineExclamationCircle } from 'react-icons/hi'
+import { Link, useNavigate } from 'react-router-dom'
 
 import axios from 'axios'
 const DashProfile = () => {
@@ -23,7 +23,7 @@ const DashProfile = () => {
   const [showModal, setshowModal] = useState(false);
   const filePickerRef = useRef();
   const dispatch = useDispatch();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   //console.log(filePickerRef);
   //console.log(imagefileUploadProgress,imageFileUploadError);
   const handleChange = (e) => {
@@ -92,34 +92,34 @@ const DashProfile = () => {
     )
   }
 
-  const handleDeleteUser=async()=>{
-      setshowModal(false);
-      try {
+  const handleDeleteUser = async () => {
+    setshowModal(false);
+    try {
       dispatch(deleteUserStart());
-      const res = await axios.delete(`http://localhost:4000/api/v1/user/delete/${currentUser._id}`,{ withCredentials: true });
+      const res = await axios.delete(`http://localhost:4000/api/v1/user/delete/${currentUser._id}`, { withCredentials: true });
       console.log(res.data);
       if (!res) dispatch(deleteUserFailure(res.message));
       else {
         dispatch(deleteUserSuccess());
         navigate("/");
       }
-      } catch (error) {
-         dispatch(deleteUserFailure(error.message))
-      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message))
+    }
   }
 
-  const handleSignout=async()=>{
-     try {
-         const res=await axios.post('http://localhost:4000/api/v1/user/signout',{ withCredentials: true});
-         console.log(res)
-         if(!res)console.log(res);
-         else{
-          dispatch(signOutSuccess());
-          navigate("/")
-         }
-     } catch (error) {
-       console.log("error in signout",error)
-     }
+  const handleSignout = async () => {
+    try {
+      const res = await axios.post('http://localhost:4000/api/v1/user/signout', { withCredentials: true });
+      console.log(res)
+      if (!res) console.log(res);
+      else {
+        dispatch(signOutSuccess());
+        navigate("/")
+      }
+    } catch (error) {
+      console.log("error in signout", error)
+    }
   }
 
   return (
@@ -136,6 +136,15 @@ const DashProfile = () => {
         <TextInput type='email' id='email' placeholder='email' defaultValue={currentUser.email} onChange={handleChange} />
         <TextInput type='text' id='password' placeholder='password' onChange={handleChange} />
         <Button type='submit' gradientDuoTone='purpleToBlue' outline> Update </Button>
+        {
+          currentUser && currentUser.isAdmin && (
+            <Link to="/create-post">
+            <Button type='button' gradientDuoTone='purpleToPink' className='w-full'>
+                  create a post
+            </Button>
+            </Link>
+          )
+        }
       </form>
       <div className='text-red-500 flex justify-between mt-5'>
         <span onClick={() => setshowModal(true)} className='cursor-pointer'>Delete Account</span>
@@ -150,16 +159,16 @@ const DashProfile = () => {
       <Modal show={showModal} onClose={() => setshowModal(false)} popup size='md'>
 
         <Modal.Header />
-         <Modal.Body>
-             <div className='text-center'>
-               <HiOutlineExclamationCircle className='w-14 h-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto'/>
-               <h3 className='mb-5 text-lg text-gray-500'>Are You sure to you want to delete your account</h3>
-               <div className='flex justify-center gap-4'>
-                  <Button color='failure' onClick={handleDeleteUser}>Yes,i am sure</Button>
-                  <Button color='gray' onClick={()=>setshowModal(false)}>No,cancel</Button>
-               </div>
-             </div>
-         </Modal.Body>
+        <Modal.Body>
+          <div className='text-center'>
+            <HiOutlineExclamationCircle className='w-14 h-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-500'>Are You sure to you want to delete your account</h3>
+            <div className='flex justify-center gap-4'>
+              <Button color='failure' onClick={handleDeleteUser}>Yes,i am sure</Button>
+              <Button color='gray' onClick={() => setshowModal(false)}>No,cancel</Button>
+            </div>
+          </div>
+        </Modal.Body>
       </Modal>
     </div>
   )
