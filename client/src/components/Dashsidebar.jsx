@@ -12,7 +12,7 @@ const Dashsidebar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const currentUser = useSelector((state) => state.user)
-  console.log(currentUser.currentUser)
+  //console.log(currentUser.currentUser)
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
     const tabFromUrl = urlParams.get('tab')
@@ -23,7 +23,7 @@ const Dashsidebar = () => {
   const handleSignout = async () => {
     try {
       const res = await axios.post('http://localhost:4000/api/v1/user/signout', { withCredentials: true });
-      console.log(res)
+      //console.log(res)
       if (!res) console.log(res);
       else {
         dispatch(signOutSuccess());
