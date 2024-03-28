@@ -38,7 +38,7 @@ const DashProfile = () => {
     try {
       dispatch(updateStart());
       const res = await axios.put(`http://localhost:4000/api/v1/user/update/${currentUser._id}`, formData, { withCredentials: true });
-      console.log(res.data);
+      //console.log(res.data);
       if (!res) dispatch(updateFailure(res.message));
       else {
         dispatch(updateSuccess(res.data));
