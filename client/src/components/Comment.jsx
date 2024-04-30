@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import moment from 'moment'
+import { FaThumbsUp } from 'react-icons/fa';
 
-const Comment = ({comment}) => {
+const Comment = ({comment,onLike}) => {
     const [user,setuser]=useState({});
     //console.log(user)
     useEffect(()=>{
@@ -29,6 +30,11 @@ const Comment = ({comment}) => {
            <span className='text-gray-500 text-xs'>{moment(comment.createdAt).fromNow()}</span>
         </div>
         <p className='text-gray-500 pb-2'>{comment.content}</p>
+        <div>
+           <button type='button' onClick={()=>onLike(comment._id)} className='text-gray-400 hover:text-blue-500'>
+              <FaThumbsUp className='text-sm'/>
+           </button>
+        </div>
         </div>
     </div>
   )

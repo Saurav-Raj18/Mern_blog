@@ -14,6 +14,7 @@ const CommentSection = ({ postId }) => {
   const [commentError, setCommentError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+  const navigate=useNavigate();
   console.log(comments);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +51,33 @@ const CommentSection = ({ postId }) => {
     }
     getComments();
   }, [postId]);
+
+  const handleLike = async (commentId) => {
+    try {
+      if (!currentUser) {
+        navigate('/sign-in');
+        return;
+      }
+      const res = await axios.put(`http://localhost:4000/api/v1/comment/likeComment/${commentId}`,{withCredentials:true});
+      console.log('likes',res)
+      if (res.data) {
+        setComments(
+          comments.map((comment) =>
+            comment._id === commentId
+              ? {
+                  ...comment,
+                  likes: res.data.likes,
+                  numberOfLikes: res.data.likes.length,
+                }
+              : comment
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
 
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
@@ -107,7 +135,7 @@ const CommentSection = ({ postId }) => {
 
           {
             comments.map((comment)=>{
-              return <Comment key={comment._id} comment={comment}/>
+              return <Comment key={comment._id} comment={comment} onLike={handleLike}/>
             })
           }
 
